@@ -2,6 +2,7 @@
 #define BALL_H
 
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/System/Vector2.hpp>
 
 struct Ball
 {
@@ -9,7 +10,10 @@ struct Ball
 			Ball(const Ball &) = delete;
 	Ball &	operator=(const Ball &) = delete;
 
-	sf::CircleShape	shape;
+	void	update();
+
+	sf::CircleShape	mShape;
+	sf::Vector2f	mVelocity;
 };
 
 #endif

@@ -31,10 +31,12 @@ int main()
 			}
 		}
 
+		ball.update();
+
 		// "Clear" the window from previouly drawn graphics
 		window.clear(sf::Color::Black);
 
-		window.draw(ball.shape);
+		window.draw(ball.mShape);
 		window.display();
 	}
 
