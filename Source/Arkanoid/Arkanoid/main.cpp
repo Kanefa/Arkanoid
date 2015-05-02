@@ -1,12 +1,15 @@
+#include "ball.h"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-
 int main()
 {
 	const unsigned int windowWidth{800}, windowHeight{600};
+
+	Ball ball{windowWidth / 2, windowHeight / 2};
+
 	sf::RenderWindow window({windowWidth, windowHeight}, "Arkanoid");
 	window.setFramerateLimit(60);
 
@@ -31,7 +34,7 @@ int main()
 		// "Clear" the window from previouly drawn graphics
 		window.clear(sf::Color::Black);
 
-		// Show the window contents
+		window.draw(ball.shape);
 		window.display();
 	}
 
