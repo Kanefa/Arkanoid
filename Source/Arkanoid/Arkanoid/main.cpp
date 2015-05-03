@@ -4,13 +4,16 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
+namespace global
+{
+	extern const unsigned int windowWidth{800}, windowHeight{600};
+}
+
 int main()
 {
-	const unsigned int windowWidth{800}, windowHeight{600};
+	Ball ball{global::windowWidth / 2, global::windowHeight / 2};
 
-	Ball ball{windowWidth / 2, windowHeight / 2};
-
-	sf::RenderWindow window({windowWidth, windowHeight}, "Arkanoid");
+	sf::RenderWindow window({global::windowWidth, global::windowHeight}, "Arkanoid");
 	window.setFramerateLimit(60);
 
 	while (window.isOpen())

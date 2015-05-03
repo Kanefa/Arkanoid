@@ -12,6 +12,11 @@ struct Ball
 
 	void	update();
 
+	float	left() const;
+	float	right() const;
+	float	top() const;
+	float	bottom() const;
+
 	sf::CircleShape	mShape;
 	sf::Vector2f	mVelocity;
 };
