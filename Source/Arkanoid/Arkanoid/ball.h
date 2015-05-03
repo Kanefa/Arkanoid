@@ -12,6 +12,8 @@ struct Ball
 
 	void	update();
 
+	float	x() const;
+	float	y() const;
 	float	left() const;
 	float	right() const;
 	float	top() const;

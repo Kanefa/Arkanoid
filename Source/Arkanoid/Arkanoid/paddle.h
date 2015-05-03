@@ -12,13 +12,15 @@ struct Paddle
 
 	void		update();
 
-	float left() const;
-	float right() const;
-	float top() const;
-	float bottom() const;
+	float		x() const;
+	float		y() const;
+	float		left() const;
+	float		right() const;
+	float		top() const;
+	float		bottom() const;
 
 	sf::RectangleShape mShape;
-	sf::Vector2f mVelocity;
+	sf::Vector2f	   mVelocity;
 };
 
 #endif

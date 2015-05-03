@@ -42,22 +42,32 @@ void Paddle::update()
 	}
 }
 
+float Paddle::x() const
+{
+	return mShape.getPosition().x;
+}
+
+float Paddle::y() const
+{
+	return mShape.getPosition().y;
+}
+
 float Paddle::left() const
 {
-	return mShape.getPosition().x - mShape.getSize().x / 2.f;
+	return x() - mShape.getSize().x / 2.f;
 }
 
 float Paddle::right() const
 {
-	return mShape.getPosition().x + mShape.getSize().x / 2.f;
+	return x() + mShape.getSize().x / 2.f;
 }
 
 float Paddle::top() const
 {
-	return mShape.getPosition().y - mShape.getSize().y / 2.f;
+	return y() - mShape.getSize().y / 2.f;
 }
 
 float Paddle::bottom() const
 {
-	return mShape.getPosition().y + mShape.getSize().y / 2.f;
+	return y() + mShape.getSize().y / 2.f;
 }

@@ -4,7 +4,7 @@
 namespace global
 {
 	extern const unsigned int windowWidth, windowHeight;
-	const float ballVelocity{ 8.f };
+	extern const float ballVelocity;
 }
 
 Ball::Ball(float x, float y)
@@ -40,22 +40,32 @@ void Ball::update()
 	}
 }
 
+float Ball::x() const
+{
+	return mShape.getPosition().x;
+}
+
+float Ball::y() const
+{
+	return mShape.getPosition().y;
+}
+
 float Ball::left() const
 {
-	return mShape.getPosition().x - mShape.getRadius();
+	return x() - mShape.getRadius();
 }
 
 float Ball::right() const
 {
-	return mShape.getPosition().x + mShape.getRadius();
+	return x() + mShape.getRadius();
 }
 
 float Ball::top() const
 {
-	return mShape.getPosition().y - mShape.getRadius();
+	return y() - mShape.getRadius();
 }
 
 float Ball::bottom() const
 {
-	return mShape.getPosition().y + mShape.getRadius();
+	return y() + mShape.getRadius();
 }
