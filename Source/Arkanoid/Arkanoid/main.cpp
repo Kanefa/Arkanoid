@@ -5,12 +5,14 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <algorithm>
+#include <cstdlib>
 #include <vector>
 
 namespace global
 {
 	extern const unsigned int windowWidth{800}, windowHeight{600};
-	extern const float ballVelocity{8.f};
+	extern const float ballVelocity{7.f};
 	extern const float paddleWidth{60.f}, paddleHeight{20.f}, paddleVelocity{6.f};
 	extern const float brickWidth{60.f}, brickHeight{20.f};
 	extern const int countBlocksX{11}, countBlocksY{4};
@@ -45,6 +47,52 @@ void testCollision(Paddle &paddle, Ball &ball)
 	{
 		// paddle struck on right side
 		ball.mVelocity.x = global::ballVelocity;
+	}
+}
+
+// Define a function that deals with brick/ball collisions
+void testCollision(Brick &brick, Ball &ball)
+{
+	// If there's no intersection, exit the function
+	if (!isIntersecting(brick, ball))
+	{
+		return;
+	}
+
+	// Otherwise the brick has been struck!
+	brick.mDestroyed = true;
+
+	// Calculate how much the ball intersects the brick in every direction
+	float overlapLeft{ball.right() - brick.left()};
+	float overlapRight{brick.right() - ball.left()};
+	float overlapTop{ball.bottom() - brick.top()};
+	float overlapBottom{brick.bottom() - ball.top()};
+
+	// If the magnitude of the left overlap is smaller than the right
+	// overlap we can assume the ball hit the brick from the left.
+	bool ballFromLeft(abs(overlapLeft) < abs(overlapRight));
+
+	// If the magnitude of the top overlap is smaller than the bottom
+	// overlap we can assume the ball hit the brick from the top.
+	bool ballFromTop(abs(overlapTop) < abs(overlapBottom));
+
+	// Store the minimum overlaps for the X and Y axis
+	float minOverlapX{ballFromLeft ? overlapLeft : overlapRight};
+	float minOverlapY{ballFromTop ? overlapTop : overlapBottom};
+
+	// If the magnitude of the X overlap is less than the magnitude of the Y
+	// overlap, we can assume the ball struck the brick horizontally - otherwise,
+	// the ball hit the brick vertically
+
+	// The based on our results we change either the X or Y velocity
+	// of the ball, creating a "realistic" response for the collision
+	if (abs(minOverlapX) < abs(minOverlapY))
+	{
+		ball.mVelocity.x = ballFromLeft ? -global::ballVelocity : global::ballVelocity;
+	}
+	else
+	{
+		ball.mVelocity.y = ballFromTop ? -global::ballVelocity : global::ballVelocity;
 	}
 }
 
@@ -89,6 +137,15 @@ int main()
 		ball.update();
 		paddle.update();
 		testCollision(paddle, ball);
+
+		for (auto &brick : bricks)
+		{
+			testCollision(brick, ball);
+		}
+
+		bricks.erase(std::remove_if(begin(bricks), end(bricks),
+			[](const Brick &brick){ return brick.mDestroyed; }),
+			end(bricks));
 
 		// "Clear" the window from previouly drawn graphics
 		window.clear(sf::Color::Black);

@@ -7,7 +7,7 @@ struct Brick
 {
 			Brick(float x, float y);
 			Brick(const Brick &) = default;
-	Brick &	operator=(const Brick &) = delete;
+	Brick &	operator=(const Brick &) = default;
 
 	float	x() const;
 	float	y() const;

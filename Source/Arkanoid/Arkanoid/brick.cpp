@@ -7,6 +7,7 @@ namespace global
 }
 
 Brick::Brick(float x, float y)
+: mDestroyed{false}
 {
 	mShape.setPosition(x, y);
 	mShape.setSize({global::brickWidth, global::brickHeight});
