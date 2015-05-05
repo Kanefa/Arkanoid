@@ -1,26 +1,19 @@
 #ifndef PADDLE_H
 #define PADDLE_H
 
-#include <SFML/Graphics/RectangleShape.hpp>
+#include "rectangle.h"
 #include <SFML/System/Vector2.hpp>
 
-struct Paddle
+struct Paddle : public Rectangle
 {
-				Paddle(float x, float y);
-				Paddle(const Paddle &) = delete;
-	Paddle &	operator=(const Paddle &) = delete;
+							Paddle(sf::Vector2f position, sf::Vector2f size, float velocity);
+							Paddle(const Paddle &) = delete;
+	Paddle &				operator=(const Paddle &) = delete;
 
-	void		update();
+	void					update();
 
-	float		x() const;
-	float		y() const;
-	float		left() const;
-	float		right() const;
-	float		top() const;
-	float		bottom() const;
-
-	sf::RectangleShape mShape;
-	sf::Vector2f	   mVelocity;
+	const float				mMaxVelocity{6.f};
+	sf::Vector2f			mVelocity;
 };
 
 #endif

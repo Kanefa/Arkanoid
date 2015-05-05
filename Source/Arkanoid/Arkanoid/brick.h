@@ -1,23 +1,16 @@
 #ifndef BRICK_H
 #define BRICK_H
 
-#include <SFML/Graphics/RectangleShape.hpp>
+#include "rectangle.h"
+#include <SFML/System/Vector2.hpp>
 
-struct Brick
+struct Brick : public Rectangle
 {
-			Brick(float x, float y);
-			Brick(const Brick &) = default;
-	Brick &	operator=(const Brick &) = default;
+							Brick(sf::Vector2f position, sf::Vector2f size);
+							Brick(const Brick &) = default;
+	Brick &					operator=(const Brick &) = default;
 
-	float	x() const;
-	float	y() const;
-	float	left() const;
-	float	right() const;
-	float	top() const;
-	float	bottom() const;
-
-	sf::RectangleShape mShape;
-	bool			   mDestroyed; // Has the brick been struck?
+	bool					mDestroyed{false}; // Has the brick been struck?
 };
 
 #endif

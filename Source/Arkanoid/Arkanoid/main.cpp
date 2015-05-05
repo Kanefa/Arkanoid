@@ -3,6 +3,7 @@
 #include "paddle.h"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <algorithm>
@@ -13,16 +14,13 @@ namespace global
 {
 	extern const unsigned int windowWidth{800}, windowHeight{600};
 	extern const float ballVelocity{7.f};
-	extern const float paddleWidth{60.f}, paddleHeight{20.f}, paddleVelocity{6.f};
-	extern const float brickWidth{60.f}, brickHeight{20.f};
-	extern const int countBlocksX{11}, countBlocksY{4};
 }
 
 // Define a generic function to check if two shapes are intersecting
 template<class T1, class T2> bool isIntersecting(T1 &shape0, T2 &shape1)
 {
-	return shape0.right() >= shape1.left() && shape0.left() <= shape1.right()
-		&& shape0.bottom() >= shape1.top() && shape0.top() <= shape1.bottom();
+	return shape0.getRight() >= shape1.left() && shape0.getLeft() <= shape1.right()
+		&& shape0.getBottom() >= shape1.top() && shape0.getTop() <= shape1.bottom();
 }
 
 // Define a function that deals with paddle/ball collisions
@@ -35,10 +33,10 @@ void testCollision(Paddle &paddle, Ball &ball)
 	}
 
 	// Otherwise redirect the ball upwards
-	ball.mVelocity.y = -global::paddleVelocity;
+	ball.mVelocity.y = -global::ballVelocity;
 
 	// Direct he ball dependently on the position where he paddle was struck
-	if (ball.x() < paddle.x())
+	if (ball.x() < paddle.getX())
 	{
 		// paddle struck on left side
 		ball.mVelocity.x = -global::ballVelocity;
@@ -63,10 +61,10 @@ void testCollision(Brick &brick, Ball &ball)
 	brick.mDestroyed = true;
 
 	// Calculate how much the ball intersects the brick in every direction
-	float overlapLeft{ball.right() - brick.left()};
-	float overlapRight{brick.right() - ball.left()};
-	float overlapTop{ball.bottom() - brick.top()};
-	float overlapBottom{brick.bottom() - ball.top()};
+	float overlapLeft{ball.right() - brick.getLeft()};
+	float overlapRight{brick.getRight() - ball.left()};
+	float overlapTop{ball.bottom() - brick.getTop()};
+	float overlapBottom{brick.getBottom() - ball.top()};
 
 	// If the magnitude of the left overlap is smaller than the right
 	// overlap we can assume the ball hit the brick from the left.
@@ -99,17 +97,19 @@ void testCollision(Brick &brick, Ball &ball)
 int main()
 {
 	Ball ball{global::windowWidth / 2, global::windowHeight / 2};
-	Paddle paddle{global::windowWidth / 2, global::windowHeight - 50.f};
+	Paddle paddle{{global::windowWidth / 2, global::windowHeight - 50.f}, {60.f, 20.f}, 6.f};
 
+	std::vector<Brick> bricks;
+	const sf::Vector2f brickSize{60.f, 20.f};
+	const sf::Vector2i brickCount{11, 4};
 	const int buffer = 3;
 	const int margin = 22;
-	std::vector<Brick> bricks;
-	for (int column{0}; column < global::countBlocksX; ++column)
+	for (int column{0}; column < brickCount.x; ++column)
 	{
-		for (int row{0}; row < global::countBlocksY; ++row)
+		for (int row{0}; row < brickCount.y; ++row)
 		{
-			bricks.emplace_back((column + 1) * (global::brickWidth + buffer) + margin,
-								(row + 2) * (global::brickHeight + buffer));
+			bricks.emplace_back(sf::Vector2f((column + 1) * (brickSize.x + buffer) + margin, (row + 2) * (brickSize.y + buffer))
+				, brickSize);
 		}
 	}
 
