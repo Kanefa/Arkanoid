@@ -4,68 +4,71 @@
 namespace global
 {
 	extern const unsigned int windowWidth, windowHeight;
-	extern const float ballVelocity;
 }
 
-Ball::Ball(float x, float y)
-: mVelocity{-global::ballVelocity, -global::ballVelocity}
+Ball::Ball(sf::Vector2f position)
+: mVelocity{-mMaxVelocity, -mMaxVelocity}
 {
-	const float ballRadius{10.f};
-	mShape.setPosition(x, y);
-	mShape.setRadius(ballRadius);
+	mShape.setPosition(position);
+	mShape.setRadius(mRadius);
 	mShape.setFillColor(sf::Color::Red);
-	mShape.setOrigin(ballRadius, ballRadius);
+	mShape.setOrigin(mRadius, mRadius);
 }
 
 void Ball::update()
 {
 	mShape.move(mVelocity);
 
-	if (left() < 0)
+	if (getLeft() < 0)
 	{
-		mVelocity.x = global::ballVelocity;
+		mVelocity.x = mMaxVelocity;
 	}
-	else if (right() > global::windowWidth)
+	else if (getRight() > global::windowWidth)
 	{
-		mVelocity.x = -global::ballVelocity;
+		mVelocity.x = -mMaxVelocity;
 	}
 
-	if (top() < 0)
+	if (getTop() < 0)
 	{
-		mVelocity.y = global::ballVelocity;
+		mVelocity.y = mMaxVelocity;
 	}
-	else if (bottom() > global::windowHeight)
+	else if (getBottom() > global::windowHeight)
 	{
-		mVelocity.y = -global::ballVelocity;
+		mVelocity.y = -mMaxVelocity;
 	}
 }
 
-float Ball::x() const
+float Ball::getX() const
 {
 	return mShape.getPosition().x;
 }
 
-float Ball::y() const
+float Ball::getY() const
 {
 	return mShape.getPosition().y;
 }
 
-float Ball::left() const
+float Ball::getLeft() const
 {
-	return x() - mShape.getRadius();
+	return getX() - mShape.getRadius();
 }
 
-float Ball::right() const
+float Ball::getRight() const
 {
-	return x() + mShape.getRadius();
+	return getX() + mShape.getRadius();
 }
 
-float Ball::top() const
+float Ball::getTop() const
 {
-	return y() - mShape.getRadius();
+	return getY() - mShape.getRadius();
 }
 
-float Ball::bottom() const
+float Ball::getBottom() const
 {
-	return y() + mShape.getRadius();
+	return getY() + mShape.getRadius();
+}
+
+float Ball::getMaxVelocity() const
+{
+	return mMaxVelocity;
 }

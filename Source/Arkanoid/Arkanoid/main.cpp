@@ -13,14 +13,13 @@
 namespace global
 {
 	extern const unsigned int windowWidth{800}, windowHeight{600};
-	extern const float ballVelocity{7.f};
 }
 
 // Define a generic function to check if two shapes are intersecting
 template<class T1, class T2> bool isIntersecting(T1 &shape0, T2 &shape1)
 {
-	return shape0.getRight() >= shape1.left() && shape0.getLeft() <= shape1.right()
-		&& shape0.getBottom() >= shape1.top() && shape0.getTop() <= shape1.bottom();
+	return shape0.getRight() >= shape1.getLeft() && shape0.getLeft() <= shape1.getRight()
+		&& shape0.getBottom() >= shape1.getTop() && shape0.getTop() <= shape1.getBottom();
 }
 
 // Define a function that deals with paddle/ball collisions
@@ -33,18 +32,18 @@ void testCollision(Paddle &paddle, Ball &ball)
 	}
 
 	// Otherwise redirect the ball upwards
-	ball.mVelocity.y = -global::ballVelocity;
+	ball.mVelocity.y = -ball.getMaxVelocity();
 
 	// Direct he ball dependently on the position where he paddle was struck
-	if (ball.x() < paddle.getX())
+	if (ball.getX() < paddle.getX())
 	{
 		// paddle struck on left side
-		ball.mVelocity.x = -global::ballVelocity;
+		ball.mVelocity.x = -ball.getMaxVelocity();
 	}
 	else
 	{
 		// paddle struck on right side
-		ball.mVelocity.x = global::ballVelocity;
+		ball.mVelocity.x = ball.getMaxVelocity();
 	}
 }
 
@@ -61,10 +60,10 @@ void testCollision(Brick &brick, Ball &ball)
 	brick.mDestroyed = true;
 
 	// Calculate how much the ball intersects the brick in every direction
-	float overlapLeft{ball.right() - brick.getLeft()};
-	float overlapRight{brick.getRight() - ball.left()};
-	float overlapTop{ball.bottom() - brick.getTop()};
-	float overlapBottom{brick.getBottom() - ball.top()};
+	float overlapLeft{ball.getRight() - brick.getLeft()};
+	float overlapRight{ brick.getRight() - ball.getLeft()};
+	float overlapTop{ball.getBottom() - brick.getTop()};
+	float overlapBottom{brick.getBottom() - ball.getTop()};
 
 	// If the magnitude of the left overlap is smaller than the right
 	// overlap we can assume the ball hit the brick from the left.
@@ -86,17 +85,17 @@ void testCollision(Brick &brick, Ball &ball)
 	// of the ball, creating a "realistic" response for the collision
 	if (abs(minOverlapX) < abs(minOverlapY))
 	{
-		ball.mVelocity.x = ballFromLeft ? -global::ballVelocity : global::ballVelocity;
+		ball.mVelocity.x = ballFromLeft ? -ball.getMaxVelocity() : ball.getMaxVelocity();
 	}
 	else
 	{
-		ball.mVelocity.y = ballFromTop ? -global::ballVelocity : global::ballVelocity;
+		ball.mVelocity.y = ballFromTop ? -ball.getMaxVelocity() : ball.getMaxVelocity();
 	}
 }
 
 int main()
 {
-	Ball ball{global::windowWidth / 2, global::windowHeight / 2};
+	Ball ball{{global::windowWidth / 2, global::windowHeight / 2}};
 	Paddle paddle{{global::windowWidth / 2, global::windowHeight - 50.f}, {60.f, 20.f}, 6.f};
 
 	std::vector<Brick> bricks;

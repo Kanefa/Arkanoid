@@ -6,21 +6,24 @@
 
 struct Ball
 {
-			Ball(float x, float y);
-			Ball(const Ball &) = delete;
-	Ball &	operator=(const Ball &) = delete;
+							Ball(sf::Vector2f position);
+							Ball(const Ball &) = delete;
+	Ball &					operator=(const Ball &) = delete;
 
-	void	update();
+	float					getX() const;
+	float					getY() const;
+	float					getLeft() const;
+	float					getRight() const;
+	float					getTop() const;
+	float					getBottom() const;
+	float					getMaxVelocity() const;
 
-	float	x() const;
-	float	y() const;
-	float	left() const;
-	float	right() const;
-	float	top() const;
-	float	bottom() const;
+	void					update();
 
-	sf::CircleShape	mShape;
-	sf::Vector2f	mVelocity;
+	const float				mRadius{10.f};
+	const float				mMaxVelocity{7.f};
+	sf::CircleShape			mShape;
+	sf::Vector2f			mVelocity;
 };
 
 #endif
