@@ -15,9 +15,9 @@ Ball::Ball(sf::Vector2f position)
 	mShape.setOrigin(mRadius, mRadius);
 }
 
-void Ball::update()
+void Ball::update(FrameTime ftStep)
 {
-	mShape.move(mVelocity);
+	mShape.move(mVelocity * ftStep);
 
 	if (getLeft() < 0)
 	{

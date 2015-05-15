@@ -79,6 +79,8 @@
   <ItemGroup>
     <ClCompile Include="ball.cpp" />
     <ClCompile Include="brick.cpp" />
+    <ClCompile Include="collision.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="paddle.cpp" />
     <ClCompile Include="rectangle.cpp" />
@@ -86,8 +88,13 @@
   <ItemGroup>
     <ClInclude Include="ball.h" />
     <ClInclude Include="brick.h" />
+    <ClInclude Include="collision.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="paddle.h" />
     <ClInclude Include="rectangle.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="collision.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

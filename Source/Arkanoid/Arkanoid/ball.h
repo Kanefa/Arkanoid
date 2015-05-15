@@ -4,6 +4,8 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 
+using FrameTime = float;
+
 struct Ball
 {
 							Ball(sf::Vector2f position);
@@ -18,10 +20,10 @@ struct Ball
 	float					getBottom() const;
 	float					getMaxVelocity() const;
 
-	void					update();
+	void					update(FrameTime ftStep);
 
 	const float				mRadius{10.f};
-	const float				mMaxVelocity{7.f};
+	const float				mMaxVelocity{0.8f};
 	sf::CircleShape			mShape;
 	sf::Vector2f			mVelocity;
 };

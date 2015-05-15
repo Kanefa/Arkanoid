@@ -7,7 +7,7 @@ namespace global
 	extern const unsigned int windowWidth, windowHeight;
 }
 
-Paddle::Paddle(sf::Vector2f position, sf::Vector2f size, float velocity)
+Paddle::Paddle(sf::Vector2f position, sf::Vector2f size)
 : mVelocity{0.0f, 0.0f}
 {
 	mShape.setPosition(position);
@@ -16,9 +16,9 @@ Paddle::Paddle(sf::Vector2f position, sf::Vector2f size, float velocity)
 	mShape.setOrigin(size / 2.f);
 }
 
-void Paddle::update()
+void Paddle::update(FrameTime ftStep)
 {
-	mShape.move(mVelocity);
+	mShape.move(mVelocity * ftStep);
 
 	// To move the paddle, we check if the user is pressing
 	// the left or right arrow key: if so, we change the velocity
