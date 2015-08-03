@@ -77,24 +77,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ball.cpp" />
-    <ClCompile Include="brick.cpp" />
+    <ClCompile Include="cCircle.cpp" />
     <ClCompile Include="collision.cpp" />
+    <ClCompile Include="component.cpp" />
+    <ClCompile Include="cPaddleControl.cpp" />
+    <ClCompile Include="cPhysics.cpp" />
+    <ClCompile Include="cPosition.cpp" />
+    <ClCompile Include="CRectangle.cpp" />
+    <ClCompile Include="entity.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="paddle.cpp" />
+    <ClCompile Include="manager.cpp" />
     <ClCompile Include="rectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ball.h" />
-    <ClInclude Include="brick.h" />
+    <ClInclude Include="cCircle.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="component.h" />
+    <ClInclude Include="componentID.h" />
+    <ClInclude Include="cPaddleControl.h" />
+    <ClInclude Include="cPhysics.h" />
+    <ClInclude Include="cPosition.h" />
+    <ClInclude Include="cRectangle.h" />
+    <ClInclude Include="entity.h" />
     <ClInclude Include="game.h" />
-    <ClInclude Include="paddle.h" />
+    <ClInclude Include="manager.h" />
     <ClInclude Include="rectangle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="collision.inl" />
+    <None Include="entity.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

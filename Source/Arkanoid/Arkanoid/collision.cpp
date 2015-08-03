@@ -1,47 +1,59 @@
 #include "collision.h"
+#include "cPhysics.h"
+
+namespace global
+{
+	extern const float ballVelocity;
+}
 
 // Define a function that deals with paddle/ball collisions
-void testCollision(Paddle &paddle, Ball &ball)
+void testCollisionPB(Entity &paddle, Entity &ball)
 {
+	auto &cpPaddle(paddle.getComponent<CPhysics>());
+	auto &cpBall(ball.getComponent<CPhysics>());
+
 	// If there's no intersection, exit the function
-	if (!isIntersecting(paddle, ball))
+	if (!isIntersecting(cpPaddle, cpBall))
 	{
 		return;
 	}
 
 	// Otherwise redirect the ball upwards
-	ball.mVelocity.y = -ball.getMaxVelocity();
+	cpBall.mVelocity.y = -global::ballVelocity;
 
 	// Direct he ball dependently on the position where he paddle was struck
-	if (ball.getX() < paddle.getX())
+	if (cpBall.getX() < cpPaddle.getX())
 	{
 		// paddle struck on left side
-		ball.mVelocity.x = -ball.getMaxVelocity();
+		cpBall.mVelocity.x = -global::ballVelocity;
 	}
 	else
 	{
 		// paddle struck on right side
-		ball.mVelocity.x = ball.getMaxVelocity();
+		cpBall.mVelocity.x = global::ballVelocity;
 	}
 }
 
 // Define a function that deals with brick/ball collisions
-void testCollision(Brick &brick, Ball &ball)
+void testCollisionBB(Entity &brick, Entity &ball)
 {
+	auto &cpBrick(brick.getComponent<CPhysics>());
+	auto &cpBall(ball.getComponent<CPhysics>());
+
 	// If there's no intersection, exit the function
-	if (!isIntersecting(brick, ball))
+	if (!isIntersecting(cpBrick, cpBall))
 	{
 		return;
 	}
 
 	// Otherwise the brick has been struck!
-	brick.mDestroyed = true;
+	brick.destroy();
 
 	// Calculate how much the ball intersects the brick in every direction
-	float overlapLeft{ ball.getRight() - brick.getLeft() };
-	float overlapRight{ brick.getRight() - ball.getLeft() };
-	float overlapTop{ ball.getBottom() - brick.getTop() };
-	float overlapBottom{ brick.getBottom() - ball.getTop() };
+	float overlapLeft{cpBall.getRight() - cpBrick.getLeft()};
+	float overlapRight{cpBrick.getRight() - cpBall.getLeft()};
+	float overlapTop{cpBall.getBottom() - cpBrick.getTop()};
+	float overlapBottom{cpBrick.getBottom() - cpBall.getTop()};
 
 	// If the magnitude of the left overlap is smaller than the right
 	// overlap we can assume the ball hit the brick from the left.
@@ -63,10 +75,10 @@ void testCollision(Brick &brick, Ball &ball)
 	// of the ball, creating a "realistic" response for the collision
 	if (abs(minOverlapX) < abs(minOverlapY))
 	{
-		ball.mVelocity.x = ballFromLeft ? -ball.getMaxVelocity() : ball.getMaxVelocity();
+		cpBall.mVelocity.x = ballFromLeft ? -global::ballVelocity : global::ballVelocity;
 	}
 	else
 	{
-		ball.mVelocity.y = ballFromTop ? -ball.getMaxVelocity() : ball.getMaxVelocity();
+		cpBall.mVelocity.y = ballFromTop ? -global::ballVelocity : global::ballVelocity;
 	}
 }

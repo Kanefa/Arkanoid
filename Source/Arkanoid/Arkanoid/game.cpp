@@ -1,14 +1,29 @@
 #include "game.h"
 #include "collision.h"
+#include "cCircle.h"
+#include "cPaddleControl.h"
+#include "cPhysics.h"
+#include "cPosition.h"
+#include "cRectangle.h"
+#include "entity.h"
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <cstdlib>
 #include <chrono>
+
+namespace global
+{
+	extern const float ballVelocity;
+}
 
 Game::Game()
 {
 	mWindow.setFramerateLimit(240);
 
-	const sf::Vector2f brickSize{60.f, 20.f};
+	createPaddle();
+	createBall();
+
 	const sf::Vector2i brickCount{11, 4};
 	const int buffer = 3;
 	const int margin = 22;
@@ -16,8 +31,7 @@ Game::Game()
 	{
 		for (int row{ 0 }; row < brickCount.y; ++row)
 		{
-			mBricks.emplace_back(sf::Vector2f((column + 1) * (brickSize.x + buffer) + margin, (row + 2) * (brickSize.y + buffer))
-				, brickSize);
+			createBrick(sf::Vector2f((column + 1) * (mBrickSize.x + buffer) + margin, (row + 2) * (mBrickSize.y + buffer)));
 		}
 	}
 }
@@ -44,7 +58,7 @@ void Game::run()
 
 void Game::inputPhase()
 {
-	// Events and input should be prcocesed every frame to ensure maximum responsiveness.
+	// Events and input should be proccesed every frame to ensure maximum responsiveness.
 	sf::Event event;
 	while (mWindow.pollEvent(event))
 	{
@@ -74,29 +88,85 @@ void Game::updatePhase()
 	// decrease 'currentSlice' by 'ftSlice' until 'currentSlice' becomes less than 'ftSlice.'
 	for (; mCurrentSlice >= mFtSlice; mCurrentSlice -= mFtSlice)
 	{
-		mBall.update(mFtStep);
-		mPaddle.update(mFtStep);
+		mManager.refresh();
+		mManager.update(mFtStep);
 
-		testCollision(mPaddle, mBall);
-		for (auto &brick : mBricks)
+		auto &paddles(mManager.getEntitiesByGroup(GPaddle));
+		auto &bricks(mManager.getEntitiesByGroup(GBrick));
+		auto &balls(mManager.getEntitiesByGroup(GBall));
+
+		for (auto &b : balls)
 		{
-			testCollision(brick, mBall);
-		}
+			for (auto &p : paddles)
+				testCollisionPB(*p, *b);
 
-		mBricks.erase(std::remove_if(begin(mBricks), end(mBricks),
-			[](const Brick &brick){ return brick.mDestroyed; }),
-			end(mBricks));
+			for (auto &br : bricks)
+				testCollisionBB(*br, *b);
+		}
 	}
 }
 
 void Game::drawPhase()
 {
 	mWindow.clear(sf::Color::Black);
-	mWindow.draw(mBall.mShape);
-	mWindow.draw(mPaddle.mShape);
-	for (const auto &brick : mBricks)
-	{
-		mWindow.draw(brick.mShape);
-	}
+	mManager.draw();
 	mWindow.display();
+}
+
+void Game::render(const sf::Drawable &drawable)
+{
+	mWindow.draw(drawable);
+}
+
+Entity & Game::createBall()
+{
+	auto &entity(mManager.addEntity());
+
+	entity.addComponent<CPosition>(sf::Vector2f{global::windowWidth / 2.f, global::windowHeight / 2.f});
+	entity.addComponent<CPhysics>(sf::Vector2f{mBallRadius, mBallRadius});
+	entity.addComponent<CCircle>(this, mBallRadius);
+
+	auto &cPhysics(entity.getComponent<CPhysics>());
+	cPhysics.mVelocity = sf::Vector2f{-global::ballVelocity, -global::ballVelocity};
+	cPhysics.onOutOfBounds = [&cPhysics](const sf::Vector2f &side)
+	{
+		if (side.x != 0.f)
+			cPhysics.mVelocity.x = std::abs(cPhysics.mVelocity.x) * side.x;
+
+		if (side.y != 0.f)
+			cPhysics.mVelocity.y = std::abs(cPhysics.mVelocity.y) * side.y;
+	};
+
+	entity.addGroup(ArkanoidGroup::GBall);
+
+	return entity;
+}
+
+Entity & Game::createBrick(const sf::Vector2f &position)
+{
+	sf::Vector2f halfSize{mBrickSize.x / 2.f, mBrickSize.y / 2.f};
+	auto &entity(mManager.addEntity());
+
+	entity.addComponent<CPosition>(position);
+	entity.addComponent<CPhysics>(halfSize);
+	entity.addComponent<CRectangle>(this, halfSize);
+
+	entity.addGroup(ArkanoidGroup::GBrick);
+
+	return entity;
+}
+
+Entity & Game::createPaddle()
+{
+	sf::Vector2f halfSize{mPaddleSize.x / 2.f, mPaddleSize.y / 2.f};
+	auto &entity(mManager.addEntity());
+
+	entity.addComponent<CPosition>(sf::Vector2f{mWindow.getSize().x / 2.f, mWindow.getSize().y - 60.f});
+	entity.addComponent<CPhysics>(halfSize);
+	entity.addComponent<CRectangle>(this, halfSize);
+	entity.addComponent<CPaddleControl>();
+
+	entity.addGroup(ArkanoidGroup::GPaddle);
+
+	return entity;
 }
